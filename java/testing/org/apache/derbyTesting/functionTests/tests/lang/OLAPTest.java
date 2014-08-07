@@ -624,6 +624,18 @@ public class OLAPTest extends BaseJDBCTestCase {
         assertStatementError(LANG_WINDOW_FUNCTION_CONTEXT_ERROR,
             s,
             "merge into t2 using t3 on (t2.x=t3.y) when not matched then insert values (row_number() over ())");
+
+        // DERBY-6690: a window function in generated clause was not detected
+        // before
+        assertStatementError(LANG_WINDOW_FUNCTION_CONTEXT_ERROR,
+            s,
+            "create table t (x int generated always as " +
+            "    (row_number() over ()))");
+
+        assertStatementError(LANG_WINDOW_FUNCTION_CONTEXT_ERROR,
+            s,
+            "alter table t2 add column foo int generated always as " +
+            "    (row_number() over ())");
     }
 
 

@@ -593,6 +593,11 @@ public class OLAPTest extends BaseJDBCTestCase {
                 LANG_WINDOW_FUNCTION_CONTEXT_ERROR,
                 s,
                 "update t3 set y = y - row_number() over ()");
+
+        // DERBY-6689: NPE before
+        assertStatementError(LANG_WINDOW_FUNCTION_CONTEXT_ERROR,
+            s,
+            "merge into t2 using t3 on (t2.x=t3.y) when not matched then insert values (row_number() over ())");
     }
 
 

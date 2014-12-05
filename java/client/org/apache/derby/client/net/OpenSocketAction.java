@@ -23,7 +23,6 @@ package org.apache.derby.client.net;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
 public class OpenSocketAction implements java.security.PrivilegedExceptionAction {

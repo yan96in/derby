@@ -25,6 +25,8 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLSocket;
 
+import org.apache.derby.iapi.services.info.JVMInfo;
+
 public class OpenSocketAction implements java.security.PrivilegedExceptionAction {
     private String server_;
     private int port_;
@@ -63,8 +65,25 @@ public class OpenSocketAction implements java.security.PrivilegedExceptionAction
             sf = SocketFactory.getDefault();
             break;
         }
-        if (clientSSLMode_ == org.apache.derby.jdbc.ClientBaseDataSource.SSL_BASIC ||
-            clientSSLMode_ == org.apache.derby.jdbc.ClientBaseDataSource.SSL_PEER_AUTHENTICATION){
+        
+        //DERBY-6778(SSL tests are failing on 10.8 codeline with 
+        // IBM jdk 1.4.2 after poodle security backport)
+        //In order to work around the IBM jdk 1.4.2 issue, do not
+        // try to disable SSLv3 and SSLV2Hello protocols for this 
+        // specific jdk. 
+        //The SSLv3 and SSLV2Hello protocols can lead to poodle 
+        // security issue and that is why they are getting disabled 
+        // for all the other jdks as per DERBY-6764.
+        boolean SSLclient = false;//are we working with SSL enabled client
+        if ((clientSSLMode_ == org.apache.derby.jdbc.ClientBaseDataSource.SSL_BASIC ||
+                clientSSLMode_ == org.apache.derby.jdbc.ClientBaseDataSource.SSL_PEER_AUTHENTICATION))
+        	SSLclient = true;
+        
+        boolean ibmJdk142 = false;//are we working with IBM jdk 1.4.2
+        if (JVMInfo.isIBMJVM() && JVMInfo.JDK_ID == JVMInfo.J2SE_142)
+        	ibmJdk142 = true;
+
+        if (SSLclient && !ibmJdk142) {
         	//DERBY-6764(analyze impact of poodle security alert on Derby 
         	// client - server ssl support)
         	//If SSLv3 and/or SSLv2Hello is one of the enabled protocols,  

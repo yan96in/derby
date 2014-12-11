@@ -69,6 +69,7 @@ import org.apache.derby.iapi.reference.Module;
 import org.apache.derby.iapi.reference.Property;
 import org.apache.derby.iapi.reference.SQLState;
 import org.apache.derby.iapi.services.i18n.MessageService;
+import org.apache.derby.iapi.services.info.JVMInfo;
 import org.apache.derby.iapi.services.info.ProductGenusNames;
 import org.apache.derby.iapi.services.info.ProductVersionHolder;
 import org.apache.derby.iapi.services.info.Version;
@@ -674,6 +675,18 @@ public final class NetworkServerControlImpl {
 		// InetAddresses for NetworkServerControl
 		// admin commands.
 		buildLocalAddressList(hostAddress);
+        
+		//DERBY-6778(SSL tests are failing on 10.8 codeline with 
+		// IBM jdk 1.4.2 after poodle security backport)
+		//In order to work around the IBM jdk 1.4.2 issue, do not
+		// try to disable SSLv3 and SSLV2Hello protocols for this 
+		// specific jdk. 
+		//The SSLv3 and SSLV2Hello protocols can lead to poodle 
+		// security issue and that is why they are getting disabled 
+		// for all the other jdks as per DERBY-6764.
+		boolean ibmJdk142 = false;//are we working with IBM jdk 1.4.2
+		if (JVMInfo.isIBMJVM() && JVMInfo.JDK_ID == JVMInfo.J2SE_142)
+			ibmJdk142 = true;
 											
 		// Create the right kind of socket
 		switch (getSSLMode()) {
@@ -691,12 +704,14 @@ public final class NetworkServerControlImpl {
 					(SSLServerSocket)ssf.createServerSocket(portNumber,
 					0,
 					hostAddress);
-			//DERBY-6764(analyze impact of poodle security alert on 
-			// Derby client - server ssl support)
-			String[] removeTwoProtocols = 
+			if (!ibmJdk142) {
+				//DERBY-6764(analyze impact of poodle security  
+				// alert on Derby client - server ssl support)
+				String[] removeTwoProtocols = 
 					removeSSLv3andSSLv2Hello(
-							sss1.getEnabledProtocols());
-			sss1.setEnabledProtocols(removeTwoProtocols);
+						sss1.getEnabledProtocols());
+				sss1.setEnabledProtocols(removeTwoProtocols);
+			}
 			return sss1;
 		case SSL_PEER_AUTHENTICATION:
 			SSLServerSocketFactory ssf2 =
@@ -705,12 +720,14 @@ public final class NetworkServerControlImpl {
 				(SSLServerSocket)ssf2.createServerSocket(portNumber,
 														 0,
 														 hostAddress);
-			//DERBY-6764(analyze impact of poodle security alert on 
-			// Derby client - server ssl support)
-			removeTwoProtocols = 
+			if (!ibmJdk142) {
+				//DERBY-6764(analyze impact of poodle security  
+				// alert on Derby client - server ssl support)
+				String[] removeTwoProtocols = 
 					removeSSLv3andSSLv2Hello(
-							sss2.getEnabledProtocols());
-			sss2.setEnabledProtocols(removeTwoProtocols);
+						sss2.getEnabledProtocols());
+				sss2.setEnabledProtocols(removeTwoProtocols);
+			}
 			sss2.setNeedClientAuth(true);
 			return sss2;
 		}
@@ -2628,17 +2645,31 @@ public final class NetworkServerControlImpl {
 									{
 										if (hostAddress == null)
 											hostAddress = InetAddress.getByName(hostArg);
+								        
+										//DERBY-6778(SSL tests are failing on 10.8 codeline with 
+										// IBM jdk 1.4.2 after poodle security backport)
+										//In order to work around the IBM jdk 1.4.2 issue, do not
+										// try to disable SSLv3 and SSLV2Hello protocols for this 
+										// specific jdk. 
+										//The SSLv3 and SSLV2Hello protocols can lead to poodle 
+										// security issue and that is why they are getting disabled 
+										// for all the other jdks as per DERBY-6764.
+										boolean ibmJdk142 = false;//are we working with IBM jdk 1.4.2
+										if (JVMInfo.isIBMJVM() && JVMInfo.JDK_ID == JVMInfo.J2SE_142)
+											ibmJdk142 = true;
                                         
 										switch(getSSLMode()) {
 										case SSL_BASIC:
 											SSLSocket s1 = (SSLSocket)NaiveTrustManager.getSocketFactory().
 												createSocket(hostAddress, portNumber);
-											//DERBY-6764(analyze impact of poodle security alert on 
-											// Derby client - server ssl support)
-											String[] removeTwoProtocols = 
-													removeSSLv3andSSLv2Hello(
-															s1.getEnabledProtocols());
-											s1.setEnabledProtocols(removeTwoProtocols);
+									        if (!ibmJdk142) {
+												//DERBY-6764(analyze impact of poodle security alert on 
+												// Derby client - server ssl support)
+												String[] removeTwoProtocols = 
+														removeSSLv3andSSLv2Hello(
+																s1.getEnabledProtocols());
+												s1.setEnabledProtocols(removeTwoProtocols);
+									        }
 											// Need to handshake now to get proper error reporting.
 											s1.startHandshake();
 											return s1;
@@ -2646,12 +2677,14 @@ public final class NetworkServerControlImpl {
 										case SSL_PEER_AUTHENTICATION:
 											SSLSocket s2 = (SSLSocket)SSLSocketFactory.getDefault().
 												createSocket(hostAddress, portNumber);
-											//DERBY-6764(analyze impact of poodle security alert on 
-											// Derby client - server ssl support)
-											removeTwoProtocols = 
-													removeSSLv3andSSLv2Hello(
-															s2.getEnabledProtocols());
-											s2.setEnabledProtocols(removeTwoProtocols);
+									        if (!ibmJdk142) {
+												//DERBY-6764(analyze impact of poodle security alert on 
+												// Derby client - server ssl support)
+									        	String[] removeTwoProtocols = 
+														removeSSLv3andSSLv2Hello(
+																s2.getEnabledProtocols());
+												s2.setEnabledProtocols(removeTwoProtocols);
+									        }
 											// Need to handshake now to get proper error reporting.
 											s2.startHandshake();
 											return s2;

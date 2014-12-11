@@ -30,6 +30,7 @@ import javax.net.ssl.KeyManagerFactory;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.security.cert.CertificateException;
+import org.apache.derby.iapi.services.info.JVMInfo;
 
 
 /**
@@ -67,7 +68,19 @@ public class NaiveTrustManager
             thisManager = new TrustManager [] {new NaiveTrustManager()};
         }
 
-        SSLContext ctx = SSLContext.getInstance("TLS");
+        SSLContext ctx;
+        //DERBY-6778(SSL tests are failing on 10.8 codeline with 
+        // IBM jdk 1.4.2 after poodle security backport)
+        //In order to work around the IBM jdk 1.4.2 issue, do not
+        // try to disable SSLv3 and SSLV2Hello protocols for this 
+        // specific jdk. 
+        //The SSLv3 and SSLV2Hello protocols can lead to poodle 
+        // security issue and that is why they are getting disabled 
+        // for all the other jdks as per DERBY-6764.
+        if (JVMInfo.isIBMJVM() && JVMInfo.JDK_ID == JVMInfo.J2SE_142)
+            ctx = SSLContext.getInstance("SSL");
+        else
+            ctx = SSLContext.getInstance("TLS");
         
         if (ctx.getProvider().getName().equals("SunJSSE") &&
             (System.getProperty("javax.net.ssl.keyStore") != null) &&

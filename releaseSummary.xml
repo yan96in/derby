@@ -88,7 +88,7 @@ Derby functionality includes:
 The 10.13 release family supports the following Java and JDBC versions:
 </p>
 <ul>
-  <li>Java SE 8 </li>
+  <li>Java SE 8 with JDBC 4.2</li>
 </ul>
 </overview>
 

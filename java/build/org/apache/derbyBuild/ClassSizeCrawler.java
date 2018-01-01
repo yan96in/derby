@@ -1,24 +1,3 @@
-/*
-
-   Derby - Class org.apache.derby.iapi.services.cache.ClassSizeCrawler
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
 package org.apache.derbyBuild;
 
 import org.apache.derby.iapi.services.cache.ClassSize;
@@ -32,33 +11,32 @@ import java.util.Enumeration;
 
 /**
  * This class implements a program that catalogs the size estimate coefficients of various classes.
+ * 这个类根据预估的变换类的程度进行编目
  * @see ClassSize#getSizeCoefficients.
- *<p>
  * The program is invoked as:
- *<p>
  * java -DWS=<i>work-space</i> [-DclassDir=<i>class-dir</i>] [-Dout=<i>out-file</i> [-Dprefix[.<i>x</i>=<i>package-prefix</i>]] [-Dverbose=true] org.apache.derby.iapi.services.cache.ClassSizeCrawler <i>class-or-interface</i> ...<br>
- *<p>
  * This program gets the size coefficients for each class in the <i>class-or-interface</i> list,
  * and for each class that implements an interface in the list. If there is an interface in the list
  * this program crawls through the classes hierarcy, starting at points specified by the prefix
  * properties, looking for classes that implement the interfaces.
- *<p>
+ * 这个程序先get到在class-or-interface列表中到每个类到大小系数，都实现了那个接口。如果列表中有接口，这个程序会爬继承类，
+ * （在prefix properties这个点？？？？，查找每个实现了接口都类）
  * If the <i>class-or-interface</i> list is empty then this program searches for implementations
  * of org.apache.derby.iapi.types.DataValueDescriptor, and at least one prefix property
  * must be specified
- *<p>
+ * 如果class-or-interface列表为空，这个类就查找DataValueDescriptor的实现，至少有一个prefix property属性被指定。
  * The catalog is written as a java source file
  * into <i>out-file</i>, by default
  * <i>work-space</i>/java/org.apache.derby.iapi.services.cache.ClassSizeCatalogImpl.java.
- *<p>
+ * 目录会以java源文件的形式写到out-file，默认为ClassSizeCatalogImpl.java。
  * <i>work-space</i> is the directory containing the java and classes directories. $WS in the
  * standard development environment. This property is required.
- *<p>
+ * 这的工作空间是包含java文件和class文件的目录。
  * <i>class-dir</i> is the directory containing the compiled classes. By default it is <i>work-space</i>/classes.
- *<p>
+ * class-dir是包含编译后的class文件的目录，默认为work-space/classes
  * <i>package-prefix</i> is the first part of a package name. e.g. "com.ibm.db2j.impl". At least
  * one prefix property must be specified if there is an interface in the list.
- *<p>
+ * 包前缀是包名的前面部分
  * For example:<br>
  * <pre>
  * <code>
@@ -75,7 +53,9 @@ public class ClassSizeCrawler
 {
     public static void main( String[] arg)
     {
+       //初始化classAndInterfaceList默认值
         String[] classAndInterfaceList = {"org.apache.derby.iapi.types.DataValueDescriptor"};
+       //如果参数里有值，则进行赋值
         if(arg.length > 0)
             classAndInterfaceList = arg;
         Class[] interfaceList = new Class[classAndInterfaceList.length];
@@ -84,7 +64,7 @@ public class ClassSizeCrawler
         int classCount = 0;
 
         Class classSizeClass = ClassSize.class; // Make sure that the garbage collector does not unload it
-        ClassSize.setDummyCatalog();
+        ClassSize.setDummyCatalog();//
         /* Most of the classes we will catalog invoke ClassSize.estimateBaseFromCatalog in
          * their static initializer. This dummy the catalog out so that this will not generate
          * errors. We will not actually use the classes, just examine their fields.

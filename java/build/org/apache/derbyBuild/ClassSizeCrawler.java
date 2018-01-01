@@ -59,17 +59,22 @@ public class ClassSizeCrawler
         if(arg.length > 0)
             classAndInterfaceList = arg;
         Class[] interfaceList = new Class[classAndInterfaceList.length];
-        int interfaceCount = 0;
+        int interfaceCount = 0;//接口计数器
         Class[] classList = new Class[classAndInterfaceList.length];
-        int classCount = 0;
-
+        int classCount = 0;//类计数器
+        //todo 怎么做到让垃圾收集器卸载的？
         Class classSizeClass = ClassSize.class; // Make sure that the garbage collector does not unload it
-        ClassSize.setDummyCatalog();//
+        ClassSize.setDummyCatalog();//todo 这个方法是干什么的？
         /* Most of the classes we will catalog invoke ClassSize.estimateBaseFromCatalog in
          * their static initializer. This dummy the catalog out so that this will not generate
          * errors. We will not actually use the classes, just examine their fields.
          */
-
+        /**
+         * 我们归类的大多数类静态初始化时调用了ClassSize.estimateBAseFromCatalog方法来达到使目录dummy，也就不会产生错误。
+         * 我们不会用到这些类，只会用它们的变量。
+         */
+            
+            
         for( int i = 0; i < classAndInterfaceList.length; i++)
         {
             Class cls = null;
@@ -87,14 +92,14 @@ public class ClassSizeCrawler
             else
                 classList[ classCount++] = cls;
         }
-
+        //WS是干什么的？
         String WS = System.getProperty( "WS");
         if( WS == null)
         {
             System.err.println( "*** WS is not set.");
             System.exit(1);
         }
-
+        //根目录
         StringBuffer baseDir = new StringBuffer( System.getProperty( "classDir", ""));
         if( baseDir.length() == 0)
         {
@@ -114,8 +119,9 @@ public class ClassSizeCrawler
         {
             boolean gotPrefix = false;
             // Crawl through the class hierarchies for classes implementing the interfaces
-            for( Enumeration e = System.getProperties().propertyNames();
-                 e.hasMoreElements();)
+            //爬取实现了接口的类
+            for( Enumeration e = System.getProperties().propertyNames();//propertyNames方法是做什么的？
+                 e.hasMoreElements();)//这个是干嘛的？
             {
                 String propertyName = (String) e.nextElement();
                 if( propertyName.equals( "prefix") || propertyName.startsWith( "prefix."))
@@ -240,6 +246,7 @@ public class ClassSizeCrawler
             if( filenames[fileIdx].endsWith( ".class"))
             {
                 // Strip off the ".class" suffix
+                //取消.class后缀
                 String s = filenames[fileIdx].substring( 0, filenames[fileIdx].length() - 6);
                 className.append( s);
                 Class<?> targetClass = null;

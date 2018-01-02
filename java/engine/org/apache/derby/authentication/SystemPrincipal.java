@@ -1,30 +1,14 @@
-/*
-
-   Derby - Class org.apache.derby.authentication.SystemPrincipal
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
-package org.apache.derby.authentication;
+package org.apache.derby.authentication;//authentication认证;鉴定
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.security.Principal;
+/**
+ * This interface "java.security.Principal" represents the abstract notion of a principal,
+ * which can be used to represent any entity, such as an individual,
+ * a corporation, and a login id.
+ */
+import java.security.Principal;//负责人
 
 
 /**
@@ -98,6 +82,7 @@ final public class SystemPrincipal implements Principal, Serializable {
 
     /**
      * Verify that the specified name of the principal is valid.
+     * 反序列化时用
      * @param name the name of the principal
      * @throws NullPointerException if name is null
      * @throws IllegalArgumentException if name is not a legal Principal name

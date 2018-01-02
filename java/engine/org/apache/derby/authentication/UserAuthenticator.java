@@ -1,24 +1,3 @@
-/*
-
-   Derby - Class org.apache.derby.authentication.UserAuthenticator
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
 package org.apache.derby.authentication;
 
 import java.util.Properties;
@@ -27,18 +6,18 @@ import java.sql.SQLException;
 /**
  * The UserAuthenticator interface provides operations to authenticate
  * a user's credentials in order to successfully connect to a database.
- * 
+ * 这个接口用来提供用户登录数据库时的认证操作,
  * Any user authentication schemes could be implemented using this interface
  * and registered at start-up time.
- * <p>
+ * 任何用户认证schemes都可以用这个接口实现在启动时注册
  * If an application requires its own authentication scheme, then it can
  * implement this interface and register as the authentication scheme
  * that Derby should call upon connection requests to the system.
    See the dcoumentation for the property <I>derby.authentication.provider</I>
- * <p>
+ * 如果一个应用需要自己的认证方案
  * A typical example would be to implement user authentication using
  * LDAP, Sun NIS+, or even Windows User Domain, using this interface.
- * <p>
+ * 例如:LDAP, Sun NIS+, or even Windows User Domain都是用的这个接口
  * <i>Note</i>: Additional connection attributes can be specified on the 
  * database connection URL and/or Properties object on jdbc connection. Values
  * for these attributes can be retrieved at runtime by the (specialized)
@@ -48,7 +27,7 @@ import java.sql.SQLException;
  *
  */
 
-public interface UserAuthenticator
+public interface UserAuthenticator//UserAuthenticator
 {
 	
 	/**
@@ -59,7 +38,8 @@ public interface UserAuthenticator
      * then the userName will be Fred and within the Derby user authorization 
      * system, Fred becomes a case-insensitive authorization identifier and 
      * is known as FRED
-     *<BR>
+     * 若干db连接中user=后用户名没用双引号括起来,
+	 * 说明这用户名是大小写不敏感的,认证时会被认为是其大写
      * if connection url is 
      * <code>jdbc:derby:testdb;user="Fred";password=ScT7dmM2</code>
      * then the userName will be "Fred" and within the Derby user authorization

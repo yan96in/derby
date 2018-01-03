@@ -1,24 +1,3 @@
-/*
-
-   Derby - Class org.apache.derby.iapi.sql.dictionary.DataDictionary
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to you under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
 package org.apache.derby.iapi.sql.dictionary;
 
 import java.sql.Types;
@@ -51,7 +30,9 @@ import org.apache.derby.iapi.types.RowLocation;
  * deleted by the language module itself (e.g. the language module adds and
  * deletes views, because views are too high-level for modules like the object
  * store to know about).
- *
+ *	数据字典接口描述绑定和编译?
+ *	一些描述(如表和列的描述)通过其他模块向数据字典中插入或删除,还有些描述通过语言模块自己添加/删除,
+ * 	比如,视图对于对象存储来说层次太高,就会通过语言模块操作?
  * @version 0.1
  */
 

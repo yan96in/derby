@@ -1,35 +1,3 @@
-/*
-
-   Derby - Class org.apache.derby.database.Database
-
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-
- */
-
-package org.apache.derby.database;
-
-/*
-  The org.apache.derby.iapi.db.Database interface is all the externally 
-  available methods on a database.  These are methods that might be called from 
-  an SQL-J CALL statement. 
-
-  The Javadoc comment that follows is for external consumption.
-*/
-
-
 import org.apache.derby.catalog.UUID;
 
 import java.sql.Timestamp;
@@ -42,7 +10,7 @@ import java.io.File;
  * (that is, the stored data and the files the data are stored in),
  * operations on the database such as  backup and recovery,
  * and all other things that are associated with the database itself.
- * 
+ * 这个接口提供数据库控制.
  *  @see org.apache.derby.iapi.db.Factory
  */
 public interface Database
